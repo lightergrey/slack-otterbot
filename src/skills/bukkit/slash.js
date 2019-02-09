@@ -1,3 +1,5 @@
+var debug = require("debug")("botkit:slash_command");
+
 module.exports = controller => {
   controller.on("slash_command", function(bot, message) {
     bot.replyPrivate(
