@@ -15,8 +15,8 @@ module.exports = controller => {
 
       try {
         const data = await getDataFromStorage(controller, "bukkitSources");
-        reply(`${data}`);
-        const sources = data.values ? data.values : ["https://bukk.it/"];
+        const sources =
+          data && data.values ? data.values : ["https://bukk.it/"];
         const bukkits = getBukkitsFromSources(sources).then(values => {
           controller.storage.teams.save(
             { id: "bukkits", values: values },
