@@ -60,6 +60,7 @@ if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT) {
 var Botkit = require("botkit");
 var debug = require("debug")("botkit:main");
 const bukkitListener = require("./src/skills/bukkit/listener");
+const bukkitSlash = require("./src/skills/bukkit/slash");
 const reloadBukkitsListener = require("./src/skills/reload-bukkits/listener");
 
 var bot_options = {
@@ -142,6 +143,7 @@ if (!process.env.clientId || !process.env.clientSecret) {
     });
 
   bukkitListener(controller);
+  bukkitSlash(controller);
   reloadBukkitsListener(controller);
 
   // This captures and evaluates any message sent to the bot as a DM
