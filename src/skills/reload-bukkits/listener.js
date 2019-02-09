@@ -14,20 +14,21 @@ module.exports = controller => {
 
       try {
         const data = await getDataFromStorage(controller, "bukkitSources");
+        reply(`${data}`);
         const sources = data.values ? data.values : ["https://bukk.it/"];
-        const bukkits = getBukkitsFromSources(sources);
+        const bukkits = getBukkitsFromSources(sources).then(values => {
+          controller.storage.teams.save(
+            { id: "bukkits", values: values },
+            requestErr => {
+              if (requestErr) {
+                reply(`Something went wrong: ${requestErr}`);
+                return;
+              }
 
-        controller.storage.teams.save(
-          { id: "bukkits", values: bukkits },
-          requestErr => {
-            if (requestErr) {
-              reply(`Something went wrong: ${requestErr}`);
-              return;
+              reply(`${data.length} bukkits loaded.`);
             }
-
-            reply(`${data.length} bukkits loaded.`);
-          }
-        );
+          );
+        });
       } catch (err) {
         reply(`Error getting bukkitSources: ${err}`);
       }
