@@ -17,7 +17,8 @@ module.exports = controller => {
         const data = await getDataFromStorage(controller, "bukkitSources");
         const sources =
           data && data.values ? data.values : ["https://bukk.it/"];
-        const bukkits = getBukkitsFromSources(sources).then(values => {
+
+        getBukkitsFromSources(sources).then(values => {
           controller.storage.teams.save(
             { id: "bukkits", values: values },
             requestErr => {
@@ -29,7 +30,7 @@ module.exports = controller => {
               reply(`${data.length} bukkits loaded.`);
             }
           );
-        });
+        }).catch(reply('error'););
       } catch (err) {
         reply(`Error getting bukkitSources: ${err}`);
       }
