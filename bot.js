@@ -60,6 +60,7 @@ if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT) {
 
 var Botkit = require('botkit');
 var debug = require('debug')('botkit:main');
+var bukkitListener = require("./src/skills/bukkit/listener");
 
 var bot_options = {
     clientId: process.env.clientId,
@@ -128,6 +129,8 @@ if (!process.env.clientId || !process.env.clientSecret) {
   require("fs").readdirSync(normalizedPath).forEach(function(file) {
     require("./skills/" + file)(controller);
   });
+
+  bukkitListener(controller);
 
   // This captures and evaluates any message sent to the bot as a DM
   // or sent to the bot in the form "@bot message" and passes it to
