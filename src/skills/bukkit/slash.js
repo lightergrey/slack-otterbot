@@ -1,14 +1,11 @@
-var debug = require("debug")("botkit:slash_command");
-
 module.exports = controller => {
   controller.on("slash_command", function(bot, message) {
-    bot.replyPrivate(
-      message,
-      `Only the person who used the slash command can see this. ${JSON.stringify(
+    if (message.command === "/bukkit") {
+      const query = message.text === "" ? null : message.text;
+      bot.replyPrivate(
         message,
-        null,
-        2
-      )}`
-    );
+        `Looking for a bukkit that matches query: ${query}`
+      );
+    }
   });
 };
