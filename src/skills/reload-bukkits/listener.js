@@ -1,0 +1,36 @@
+/**
+ * • `@bot reload bukkits` Gets all the bukkits from the bukkitSources
+ */
+
+const getBukkitsFromSources = require("../../utils/get-bukkits-from-sources");
+const getReply = require("../../utils/get-reply");
+
+module.exports = controller => {
+  controller.hears(
+    ["^reload bukkits"],
+    "direct_message,direct_mention,mention",
+    async (bot, message) => {
+      const reply = getReply(bot, message);
+
+      try {
+        const data = await getDataFromStorage(controller, "bukkitSources");
+        const sources = data.values ? data.values : ["https://bukk.it/"];
+        const bukkits = getBukkitsFromSources(sources);
+
+        controller.storage.teams.save(
+          { id: "bukkits", values: bukkits },
+          requestErr => {
+            if (requestErr) {
+              reply(`Something went wrong: ${requestErr}`);
+              return;
+            }
+
+            reply(`${data.length} bukkits loaded.`);
+          }
+        );
+      } catch (err) {
+        reply(`Error getting bukkitSources: ${err}`);
+      }
+    }
+  );
+};
