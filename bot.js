@@ -5,13 +5,14 @@ if (process.env.NODE_ENV !== "production") {
 
 const Botkit = require("botkit");
 const bukkitListener = require("./src/skills/bukkit/listener");
-const bukkitSlash = require("./src/skills/bukkit/slash");
-const reloadBukkitsListener = require("./src/skills/reload-bukkits/listener");
+const bukkitSlashCommand = require("./src/skills/bukkit/slash-command");
+const reloadBukkitsSlashCommand = require("./src/skills/reload-bukkits/slash-command");
 
 let bot_options = {
   clientId: process.env.clientId,
   clientSecret: process.env.clientSecret,
   clientSigningSecret: process.env.clientSigningSecret,
+  debug: true,
   scopes: ["bot"]
 };
 
@@ -53,5 +54,5 @@ require(__dirname + "/components/onboarding.js")(controller);
 
 // Set up skills
 bukkitListener(controller);
-bukkitSlash(controller);
-reloadBukkitsListener(controller);
+bukkitSlashCommand(controller);
+reloadBukkitsSlashCommand(controller);
