@@ -3,7 +3,7 @@ const bukkitService = require("../../services/bukkit");
 module.exports = controller => {
   controller.hears(
     [/^bukkit\s?([\w-]+)?(?: from (\w+))?$/i],
-    "direct_message,direct_mention,mention,ambient",
+    "direct_message, direct_mention, ambient",
     async (bot, message) => {
       try {
         const [, query, source] = message.match;
