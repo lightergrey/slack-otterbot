@@ -1,4 +1,5 @@
 const bukkitService = require("../../services/bukkit");
+let lastEventId;
 
 module.exports = controller => {
   controller.hears(
@@ -6,6 +7,16 @@ module.exports = controller => {
     "direct_message, direct_mention, ambient",
     async (bot, message) => {
       try {
+        if (message["event_id"] === lastEventId) {
+          console.log(
+            `*** already replied to this one. event_id: ${message["event_id"]}`
+          );
+        } else {
+          lastEventId = message["event_id"];
+          console.log(
+            `*** reply to this one once. event_id: ${message["event_id"]}`
+          );
+        }
         bot.replyAcknowledge(() => {
           console.log(`*** replyAcknowledge callback called`);
         });
