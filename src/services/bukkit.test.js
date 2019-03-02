@@ -3,7 +3,11 @@ const Botmock = require("botkit-mock");
 const nock = require("nock");
 
 beforeEach(() => {
-  this.controller = Botmock({ debug: false, log: false });
+  this.controller = Botmock({
+    debug: false,
+    log: false,
+    disable_startup_messages: true
+  });
 });
 
 test("reloads bukkits", () => {

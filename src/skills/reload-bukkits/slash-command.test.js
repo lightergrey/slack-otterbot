@@ -16,7 +16,11 @@ const getMockUserInput = command => ({
 });
 
 beforeEach(() => {
-  this.controller = Botmock({ debug: false, log: false });
+  this.controller = Botmock({
+    debug: false,
+    log: false,
+    disable_startup_messages: true
+  });
   this.bot = this.controller.spawn({ type: "slack" });
   slashCommand(this.controller);
 });

@@ -35,7 +35,11 @@ const storeData = data => {
 };
 
 beforeEach(() => {
-  this.controller = Botmock({ debug: false, log: false });
+  this.controller = Botmock({
+    debug: false,
+    log: false,
+    disable_startup_messages: true
+  });
   this.bot = this.controller.spawn({ type: "slack" });
   this.bot.replyAcknowledge = jest.fn();
   slashCommand(this.controller);
