@@ -5,6 +5,7 @@ module.exports = controller => {
     [/^bukkit\s?([\w-]+)?(?: from (\w+))?$/i],
     "direct_message, direct_mention, ambient",
     async (bot, message) => {
+      bot.replyAcknowledge();
       console.log(`*** message: ${JSON.stringify(message)}`);
       try {
         const [, query, source] = message.match;
