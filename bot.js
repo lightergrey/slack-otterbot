@@ -2,7 +2,7 @@ if (process.env.NODE_ENV !== "production") {
   const env = require("node-env-file");
   env(__dirname + "/.env");
 }
-
+const http = require("http");
 const Botkit = require("botkit");
 const bukkitListener = require("./src/skills/bukkit/listener");
 const bukkitSlashCommand = require("./src/skills/bukkit/slash-command");
@@ -56,3 +56,11 @@ require(__dirname + "/components/onboarding.js")(controller);
 bukkitListener(controller);
 bukkitSlashCommand(controller);
 reloadBukkitsSlashCommand(controller);
+
+// To keep Heroku's free dyno awake
+http
+  .createServer((request, response) => {
+    response.writeHead(200, { "Content-Type": "text/plain" });
+    response.end("Ok, dyno is awake.");
+  })
+  .listen(process.env.PORT || 5000);
