@@ -42,7 +42,7 @@ test("responds to 'bukkit' and no query", () => {
   const input = getMockUserInput("bukkit", "no_query");
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("https://foo/otter.gif");
+    expect(message.text).toEqual("https://bukk.it/three.png");
   });
 });
 
@@ -57,18 +57,18 @@ test("responds to 'bukkit' and bad query", () => {
 
 test("responds to 'bukkit' and query", () => {
   storeData(demoData);
-  const input = getMockUserInput("bukkit dog", "with_query");
+  const input = getMockUserInput("bukkit two", "with_query");
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    return expect(message.text).toEqual("https://foo/dog.gif");
+    return expect(message.text).toEqual("https://bukk.it/two.jpg");
   });
 });
 
 test("responds to 'bukkit' and query with source", () => {
   storeData(demoData);
-  const input = getMockUserInput("bukkit cat from br", "with_source");
+  const input = getMockUserInput("bukkit two from flo", "with_source");
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    return expect(message.text).toEqual("https://bar/cat.gif");
+    return expect(message.text).toEqual("https://floops.io/two.jpg");
   });
 });

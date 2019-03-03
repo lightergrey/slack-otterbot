@@ -13,6 +13,11 @@ module.exports = `
         <td>2016-04-05 19:59</td>
         <td>55K</td>
       </tr>
+      <tr>
+        <td><a href="three.png">three.png</a></td>
+        <td>2016-04-06 12:00</td>
+        <td>120K</td>
+      </tr>
     </table>
   </body>
 </html>

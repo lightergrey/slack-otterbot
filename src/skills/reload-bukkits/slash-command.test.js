@@ -51,7 +51,7 @@ test("responds to '/reload-bukkits'", () => {
     expect(initialReply.text).toEqual("reloading bukkits");
     expect(initialReply.response_type).toEqual("ephemeral");
 
-    expect(confirmationReply.text).toEqual("2 bukkits loaded");
+    expect(confirmationReply.text).toEqual("3 bukkits loaded");
     expect(confirmationReply.response_type).toEqual("ephemeral");
 
     this.controller.storage.teams.get("bukkits", (err, data) => {

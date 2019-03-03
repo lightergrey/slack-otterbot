@@ -1,11 +1,11 @@
 const data = {
   id: "bukkits",
   values: [
-    { source: "https://foo/", fileName: "cat.gif" },
-    { source: "https://bar/", fileName: "dog.gif" },
-    { source: "https://foo/", fileName: "dog.gif" },
-    { source: "https://foo/", fileName: "otter.gif" },
-    { source: "https://bar/", fileName: "cat.gif" }
+    { source: "https://bukk.it/", fileName: "one.gif" },
+    { source: "https://floops.io/", fileName: "two.jpg" },
+    { source: "https://bukk.it/", fileName: "two.jpg" },
+    { source: "https://bukk.it/", fileName: "three.png" },
+    { source: "https://floops.io/", fileName: "one.gif" }
   ]
 };
 

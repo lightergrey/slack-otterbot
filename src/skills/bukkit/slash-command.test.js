@@ -54,7 +54,7 @@ test("responds to 'bukkit' with no query", () => {
   const input = getMockUserInput("/bukkit", "");
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("https://foo/otter.gif");
+    expect(message.text).toEqual("https://bukk.it/three.png");
   });
 });
 
@@ -69,18 +69,18 @@ test("responds to 'bukkit' with no bad query", () => {
 
 test("responds to 'bukkit' with query", () => {
   storeData(demoData);
-  const input = getMockUserInput("/bukkit", "dog");
+  const input = getMockUserInput("/bukkit", "two");
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("https://foo/dog.gif");
+    expect(message.text).toEqual("https://bukk.it/two.jpg");
   });
 });
 
 test("responds to 'bukkit' with query with source", () => {
   storeData(demoData);
-  const input = getMockUserInput("/bukkit", "cat from br");
+  const input = getMockUserInput("/bukkit", "two from flo");
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("https://bar/cat.gif");
+    expect(message.text).toEqual("https://floops.io/two.jpg");
   });
 });
