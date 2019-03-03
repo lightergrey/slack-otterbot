@@ -1,10 +1,8 @@
-const Botmock = require("botkit-mock");
 const slashCommand = require("./slash-command");
 
-// Mock random for testing
-const mockMath = Object.create(global.Math);
-mockMath.random = () => 0.75;
-global.Math = mockMath;
+global.Math = require("../../testing/mock-math-random");
+const Botmock = require("botkit-mock");
+const demoData = require("../../testing/fixtures/storage-data-bukkits-multiple-sources");
 
 const getMockUserInput = (command, text) => ({
   type: "slash_command",
@@ -18,17 +16,6 @@ const getMockUserInput = (command, text) => ({
     }
   ]
 });
-
-const demoData = {
-  id: "bukkits",
-  values: [
-    { source: "https://foo/", fileName: "cat.gif" },
-    { source: "https://bar/", fileName: "dog.gif" },
-    { source: "https://foo/", fileName: "dog.gif" },
-    { source: "https://foo/", fileName: "otter.gif" },
-    { source: "https://bar/", fileName: "cat.gif" }
-  ]
-};
 
 const storeData = data => {
   this.controller.storage.teams.save(data, () => {});
