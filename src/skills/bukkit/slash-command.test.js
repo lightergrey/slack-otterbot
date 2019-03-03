@@ -1,25 +1,9 @@
 const slashCommand = require("./slash-command");
 
-global.Math = require("../../testing/mock-math-random");
 const Botmock = require("botkit-mock");
-const demoData = require("../../testing/fixtures/storage-data-bukkits-multiple-sources");
-
-const getMockUserInput = (command, text) => ({
-  type: "slash_command",
-  user: "someUserId",
-  channel: "someChannel",
-  messages: [
-    {
-      text,
-      command,
-      isAssertion: true
-    }
-  ]
-});
-
-const storeData = data => {
-  this.controller.storage.teams.save(data, () => {});
-};
+global.console = { error: jest.fn() };
+jest.mock("../../services/bukkit");
+const bukkitService = require("../../services/bukkit");
 
 beforeEach(() => {
   this.controller = Botmock({
@@ -33,54 +17,51 @@ beforeEach(() => {
 });
 
 test("does not respond to other", () => {
-  storeData(demoData);
-  const input = getMockUserInput("/other");
+  const input = getMockUserInput("/other", "");
+
   return this.bot.usersInput([input]).then(message => {
+    expect(this.bot.replyAcknowledge).not.toHaveBeenCalled();
     return expect(message).toMatchObject({});
   });
 });
 
-test("gives a helpful message if no bukkits found", () => {
-  storeData({});
+test("responds with text from bukkit service find resolve", async () => {
   const input = getMockUserInput("/bukkit", "");
-  return this.bot.usersInput([input]).then(message => {
+
+  bukkitService.find.mockResolvedValueOnce("find response text");
+
+  expect.assertions(2);
+  await this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("No bukkits. Try `/reload-bukkits`");
+    return expect(message.text).toEqual("find response text");
   });
 });
 
-test("responds to 'bukkit' with no query", () => {
-  storeData(demoData);
+test("responds with text from bukkit service find reject", async () => {
   const input = getMockUserInput("/bukkit", "");
-  return this.bot.usersInput([input]).then(message => {
+  const expectedErrorMessage = "'/bukkit' error: find rejected text";
+
+  bukkitService.find.mockRejectedValueOnce("find rejected text");
+
+  expect.assertions(3);
+  await this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("https://bukk.it/three.png");
+    expect(console.error).toBeCalledWith(expectedErrorMessage);
+    return expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
+      expectedErrorMessage
+    );
   });
 });
 
-test("responds to 'bukkit' with no bad query", () => {
-  storeData(demoData);
-  const input = getMockUserInput("/bukkit", "blerg");
-  return this.bot.usersInput([input]).then(message => {
-    expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("Couldn’t find a match.");
-  });
-});
-
-test("responds to 'bukkit' with query", () => {
-  storeData(demoData);
-  const input = getMockUserInput("/bukkit", "two");
-  return this.bot.usersInput([input]).then(message => {
-    expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("https://bukk.it/two.jpg");
-  });
-});
-
-test("responds to 'bukkit' with query with source", () => {
-  storeData(demoData);
-  const input = getMockUserInput("/bukkit", "two from flo");
-  return this.bot.usersInput([input]).then(message => {
-    expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    expect(message.text).toEqual("https://floops.io/two.jpg");
-  });
+const getMockUserInput = (command, text) => ({
+  type: "slash_command",
+  user: "someUserId",
+  channel: "someChannel",
+  messages: [
+    {
+      text,
+      command,
+      isAssertion: true
+    }
+  ]
 });
