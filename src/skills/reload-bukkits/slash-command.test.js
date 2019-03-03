@@ -1,6 +1,9 @@
-const Botmock = require("botkit-mock");
 const slashCommand = require("./slash-command");
+
+const Botmock = require("botkit-mock");
 const nock = require("nock");
+const scrapedDataBukkit = require("../../testing/fixtures/scraped-data-bukkit");
+const storageDataSingleSource = require("../../testing/fixtures/storage-data-bukkits-single-source");
 
 const getMockUserInput = command => ({
   type: "slash_command",
@@ -35,30 +38,11 @@ test("does not respond to other", () => {
 test("responds to '/reload-bukkits'", () => {
   nock("https://bukk.it", { encodedQueryParams: true })
     .get("/")
-    .reply(
-      200,
-      `
-      <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-      <html>
-        <body>
-          <table>
-            <tr>
-              <td><a href="one.gif">one.gif</a></td>
-              <td>2014-04-22 11:30</td>
-              <td>297K</td>
-            </tr>
-            <tr>
-              <td><a href="two.jpg">two.jpg</a></td>
-              <td>2016-04-05 19:59</td>
-              <td>55K</td>
-            </tr>
-          </table>
-        </body>
-      </html>
-      `
-    );
+    .reply(200, scrapedDataBukkit);
 
   const input = getMockUserInput("/reload-bukkits", "");
+
+  expect.assertions(5);
 
   return this.bot.usersInput([input]).then(() => {
     const initialReply = this.bot.api.logByKey["replyPrivate"][0].json;
@@ -69,5 +53,9 @@ test("responds to '/reload-bukkits'", () => {
 
     expect(confirmationReply.text).toEqual("2 bukkits loaded");
     expect(confirmationReply.response_type).toEqual("ephemeral");
+
+    this.controller.storage.teams.get("bukkits", (err, data) => {
+      return expect(data).toEqual(storageDataSingleSource);
+    });
   });
 });
