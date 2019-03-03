@@ -1,6 +1,11 @@
 const bukkitService = require("./bukkit");
+
 const Botmock = require("botkit-mock");
+global.Math = require("../testing/mock-math-random");
+
 const nock = require("nock");
+const scrapedDataBukkit = require("../testing/fixtures/scraped-data-bukkit");
+const storageData = require("../testing/fixtures/storage-data-bukkits-multiple-sources");
 
 beforeEach(() => {
   this.controller = Botmock({
@@ -14,33 +19,7 @@ test("reloads bukkits", () => {
   expect.assertions(1);
   nock("https://bukk.it", { encodedQueryParams: true })
     .get("/")
-    .reply(
-      200,
-      `
-      <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-      <html>
-        <body>
-          <table>
-            <tr>
-              <td><a href="one.gif">one.gif</a></td>
-              <td>2014-04-22 11:30</td>
-              <td>297K</td>
-            </tr>
-            <tr>
-              <td><a href="two.jpg">two.jpg</a></td>
-              <td>2016-04-05 19:59</td>
-              <td>55K</td>
-            </tr>
-            <tr>
-              <td><a href="three.gif">three.gif</a></td>
-              <td>2014-08-06 14:18</td>
-              <td>1.2M</td>
-            </tr>
-          </table>
-        </body>
-      </html>
-      `
-    );
+    .reply(200, scrapedDataBukkit);
 
   return bukkitService
     .reload(this.controller)
@@ -49,95 +28,38 @@ test("reloads bukkits", () => {
 
 test("find: prompts reload bukkits if no bukkits", () => {
   expect.assertions(1);
-
   return bukkitService
     .find(this.controller, undefined, undefined)
     .then(reply => expect(reply).toEqual("No bukkits. Try `/reload-bukkits`"));
 });
 
 test("find: returns a random item without query", () => {
+  this.controller.storage.teams.save(storageData, () => {});
   expect.assertions(1);
-
-  const data = {
-    id: "bukkits",
-    values: [
-      {
-        fileName: "foo",
-        source: "https://bukk.it/"
-      }
-    ]
-  };
-
-  this.controller.storage.teams.save(data, () => {});
-
   return bukkitService
     .find(this.controller, undefined, undefined)
-    .then(reply => expect(reply).toEqual("https://bukk.it/foo"));
+    .then(reply => expect(reply).toEqual("https://bukk.it/three.png"));
 });
 
 test("find: returns an item that matches query", () => {
+  this.controller.storage.teams.save(storageData, () => {});
   expect.assertions(1);
-
-  const data = {
-    id: "bukkits",
-    values: [
-      {
-        fileName: "bar",
-        source: "https://bukk.it/"
-      },
-      {
-        fileName: "foo",
-        source: "https://bukk.it/"
-      }
-    ]
-  };
-
-  this.controller.storage.teams.save(data, () => {});
-
   return bukkitService
-    .find(this.controller, "foo", undefined)
-    .then(reply => expect(reply).toEqual("https://bukk.it/foo"));
+    .find(this.controller, "two", undefined)
+    .then(reply => expect(reply).toEqual("https://bukk.it/two.jpg"));
 });
 
 test("find: returns an item that matches query and source", () => {
+  this.controller.storage.teams.save(storageData, () => {});
   expect.assertions(1);
-
-  const data = {
-    id: "bukkits",
-    values: [
-      {
-        fileName: "bar",
-        source: "https://floops.io/"
-      },
-      {
-        fileName: "bar",
-        source: "https://bukk.it/"
-      }
-    ]
-  };
-
-  this.controller.storage.teams.save(data, () => {});
-
   return bukkitService
-    .find(this.controller, "bar", "floops")
-    .then(reply => expect(reply).toEqual("https://floops.io/bar"));
+    .find(this.controller, "one", "floops")
+    .then(reply => expect(reply).toEqual("https://floops.io/one.gif"));
 });
 
 test("find: returns a message if no match", () => {
+  this.controller.storage.teams.save(storageData, () => {});
   expect.assertions(1);
-
-  const data = {
-    id: "bukkits",
-    values: [
-      {
-        fileName: "bar",
-        source: "https://bukk.it/"
-      }
-    ]
-  };
-
-  this.controller.storage.teams.save(data, () => {});
-
   return bukkitService
     .find(this.controller, "foo", undefined)
     .then(reply => expect(reply).toEqual("Couldn’t find a match."));

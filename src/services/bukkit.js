@@ -12,9 +12,11 @@ const makeBukkitsFromSourceAndFileNames = (source, fileNames) => {
   return fileNames
     .filter(fileName => /\.(gif|jpg|jpeg|png)$/i.test(fileName))
     .map(fileName => {
+      const url = `${source}${fileName}`;
       return {
         source,
-        fileName
+        fileName,
+        url
       };
     });
 };
@@ -74,7 +76,7 @@ const find = async (controller, query, source) => {
       return "Couldn’t find a match.";
     }
 
-    return `${match.source}${match.fileName}`;
+    return match.url;
   } catch (err) {
     return `Error getting bukkit: ${err}`;
   }
