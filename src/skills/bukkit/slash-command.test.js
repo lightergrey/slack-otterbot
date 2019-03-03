@@ -21,33 +21,44 @@ test("does not respond to other", () => {
 
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).not.toHaveBeenCalled();
-    return expect(message).toMatchObject({});
+    expect(message).toMatchObject({});
   });
 });
 
-test("responds with text from bukkit service find resolve", async () => {
+test("detects a query and source", () => {
+  const input = getMockUserInput("/bukkit", "foo from bar");
+
+  expect.assertions(2);
+  return this.bot.usersInput([input]).then(message => {
+    const [, query, source] = bukkitService.find.mock.calls[0];
+    expect(query).toEqual("foo");
+    expect(source).toEqual("bar");
+  });
+});
+
+test("responds with text from bukkit service find resolve", () => {
   const input = getMockUserInput("/bukkit", "");
 
   bukkitService.find.mockResolvedValueOnce("find response text");
 
   expect.assertions(2);
-  await this.bot.usersInput([input]).then(message => {
-    expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    return expect(message.text).toEqual("find response text");
+  return this.bot.usersInput([input]).then(message => {
+    expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
+    expect(message.text).toEqual("find response text");
   });
 });
 
-test("responds with text from bukkit service find reject", async () => {
+test("responds with text from bukkit service find reject", () => {
   const input = getMockUserInput("/bukkit", "");
   const expectedErrorMessage = "'/bukkit' error: find rejected text";
 
   bukkitService.find.mockRejectedValueOnce("find rejected text");
 
   expect.assertions(3);
-  await this.bot.usersInput([input]).then(message => {
-    expect(this.bot.replyAcknowledge).toHaveBeenCalled();
+  return this.bot.usersInput([input]).then(message => {
+    expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
     expect(console.error).toBeCalledWith(expectedErrorMessage);
-    return expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
+    expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
       expectedErrorMessage
     );
   });

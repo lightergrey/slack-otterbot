@@ -22,47 +22,58 @@ test("does not respond to other", () => {
   expect.assertions(2);
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).not.toHaveBeenCalled();
-    return expect(message).toMatchObject({});
+    expect(message).toMatchObject({});
   });
 });
 
-test("responds with text from bukkit service find resolve", async () => {
+test("detects a query and source", () => {
+  const input = getMockUserInput("bukkit foo from bar", "params");
+
+  expect.assertions(2);
+  return this.bot.usersInput([input]).then(message => {
+    const [, query, source] = bukkitService.find.mock.calls[0];
+    expect(query).toEqual("foo");
+    expect(source).toEqual("bar");
+  });
+});
+
+test("responds with text from bukkit service find resolve", () => {
   const input = getMockUserInput("bukkit", "resolve");
 
   bukkitService.find.mockResolvedValueOnce("find response text");
 
   expect.assertions(2);
-  await this.bot.usersInput([input]).then(message => {
-    expect(this.bot.replyAcknowledge).toHaveBeenCalled();
-    return expect(message.text).toEqual("find response text");
+  return this.bot.usersInput([input]).then(message => {
+    expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
+    expect(message.text).toEqual("find response text");
   });
 });
 
-test("responds with text from bukkit service find reject", async () => {
+test("responds with text from bukkit service find reject", () => {
   const input = getMockUserInput("bukkit", "reject");
   const expectedErrorMessage = "'bukkit' error: find rejected text";
 
   bukkitService.find.mockRejectedValueOnce("find rejected text");
 
   expect.assertions(3);
-  await this.bot.usersInput([input]).then(message => {
-    expect(this.bot.replyAcknowledge).toHaveBeenCalled();
+  return this.bot.usersInput([input]).then(message => {
+    expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
     expect(console.error).toBeCalledWith(expectedErrorMessage);
-    return expect(message.text).toEqual(expectedErrorMessage);
+    expect(message.text).toEqual(expectedErrorMessage);
   });
 });
 
-test("responds once to message with the same id", async () => {
+test("responds once to message with the same id", () => {
   const input = getMockUserInput("bukkit", "multiple");
 
   bukkitService.find.mockResolvedValueOnce("find response text");
 
   expect.assertions(3);
-  return this.bot.usersInput([input]).then(async message => {
+  return this.bot.usersInput([input]).then(message => {
     return this.bot.usersInput([input]).then(message => {
       expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
       expect(this.bot.detailed_answers["someChannel"]).toHaveLength(1);
-      return expect(message.text).toEqual("find response text");
+      expect(message.text).toEqual("find response text");
     });
   });
 });
