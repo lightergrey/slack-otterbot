@@ -27,40 +27,35 @@ test("reloads bukkits", () => {
 });
 
 test("find: prompts reload bukkits if no bukkits", () => {
-  expect.assertions(1);
-  return bukkitService
-    .find(this.controller, undefined, undefined)
-    .then(reply => expect(reply).toEqual("No bukkits. Try `/reload-bukkits`"));
-});
-
-test("find: returns a random item without query", () => {
-  this.controller.storage.teams.save(storageData, () => {});
-  expect.assertions(1);
-  return bukkitService
-    .find(this.controller, undefined, undefined)
-    .then(reply => expect(reply).toEqual("https://bukk.it/three.png"));
-});
-
-test("find: returns an item that matches query", () => {
-  this.controller.storage.teams.save(storageData, () => {});
-  expect.assertions(1);
-  return bukkitService
-    .find(this.controller, "two", undefined)
-    .then(reply => expect(reply).toEqual("https://bukk.it/two.jpg"));
-});
-
-test("find: returns an item that matches query and source", () => {
-  this.controller.storage.teams.save(storageData, () => {});
-  expect.assertions(1);
-  return bukkitService
-    .find(this.controller, "one", "floops")
-    .then(reply => expect(reply).toEqual("https://floops.io/one.gif"));
+  expect(
+    bukkitService.find(this.controller, undefined, undefined)
+  ).rejects.toBe("No bukkits. Try `/reload-bukkits`");
 });
 
 test("find: returns a message if no match", () => {
   this.controller.storage.teams.save(storageData, () => {});
-  expect.assertions(1);
-  return bukkitService
-    .find(this.controller, "foo", undefined)
-    .then(reply => expect(reply).toEqual("Couldn’t find a match."));
+  expect(bukkitService.find(this.controller, "foo", undefined)).resolves.toBe(
+    "Couldn’t find a match."
+  );
+});
+
+test("find: returns a random item without query", () => {
+  this.controller.storage.teams.save(storageData, () => {});
+  expect(
+    bukkitService.find(this.controller, undefined, undefined)
+  ).resolves.toBe("https://bukk.it/three.png");
+});
+
+test("find: returns an item that matches query", () => {
+  this.controller.storage.teams.save(storageData, () => {});
+  expect(bukkitService.find(this.controller, "two", undefined)).resolves.toBe(
+    "https://bukk.it/two.jpg"
+  );
+});
+
+test("find: returns an item that matches query and source", () => {
+  this.controller.storage.teams.save(storageData, () => {});
+  expect(bukkitService.find(this.controller, "one", "floops")).resolves.toBe(
+    "https://floops.io/one.gif"
+  );
 });

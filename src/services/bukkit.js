@@ -61,35 +61,33 @@ const getBukkitsFromSources = async () => {
 };
 
 const find = async (controller, query, source) => {
-  try {
-    const bukkits = await storage.get(controller, id);
+  return new Promise(async (resolve, reject) => {
+    try {
+      const bukkits = await storage.get(controller, id);
 
-    if (!bukkits || bukkits.length === 0) {
-      return "No bukkits. Try `/reload-bukkits`";
+      if (!bukkits || bukkits.length === 0) {
+        reject("No bukkits. Try `/reload-bukkits`");
+      }
+
+      const match = query
+        ? findRandomMatchForQuery(bukkits, query, source)
+        : getRandomItem(bukkits);
+
+      if (!match) {
+        resolve("Couldn’t find a match.");
+      }
+
+      resolve(match.url);
+    } catch (err) {
+      reject(err);
     }
-
-    const match = query
-      ? findRandomMatchForQuery(bukkits, query, source)
-      : getRandomItem(bukkits);
-
-    if (!match) {
-      return "Couldn’t find a match.";
-    }
-
-    return match.url;
-  } catch (err) {
-    return `Error getting bukkit: ${err}`;
-  }
+  });
 };
 
 const reload = async controller => {
-  try {
-    const values = await getBukkitsFromSources();
-    storage.save(controller, { id, values });
-    return `${values.length} bukkits loaded`;
-  } catch (err) {
-    return `Error reloading bukkits: ${err}`;
-  }
+  const values = await getBukkitsFromSources();
+  storage.save(controller, { id, values });
+  return `${values.length} bukkits loaded`;
 };
 
 module.exports = { find, reload };
