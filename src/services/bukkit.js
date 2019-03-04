@@ -33,8 +33,7 @@ const findRandomMatchForQuery = (bukkits, query, source) => {
   return getRandomItem(matches);
 };
 
-const getBukkitsFromSources = async () => {
-  const sources = ["https://bukk.it/"];
+const getBukkitsFromSources = async sources => {
   const config = {
     values: {
       listItem: "a",
@@ -42,22 +41,20 @@ const getBukkitsFromSources = async () => {
     }
   };
   const requests = sources.map(source => {
-    return scrapeIt(source, config)
-      .then(fileNames => {
-        return makeBukkitsFromSourceAndFileNames(source, fileNames.data.values);
-      })
-      .catch(err => {
-        console.error(`###### failed early getBukkitsFromSources: ${err}`);
-      });
+    return scrapeIt(source, config).then(({ data, response }) => {
+      if (response.statusCode !== 200) {
+        throw `${response.statusCode}: ${source}`;
+      }
+      if (data.values.length === 0) {
+        throw `${source}: no bukkits found`;
+      }
+      return makeBukkitsFromSourceAndFileNames(source, data.values);
+    });
   });
 
-  return Promise.all(requests)
-    .then(responses => {
-      return [].concat(...responses);
-    })
-    .catch(err => {
-      console.error(`###### failed late getBukkitsFromSources: ${err}`);
-    });
+  return Promise.all(requests).then(responses => {
+    return [].concat(...responses);
+  });
 };
 
 const find = async (controller, query, source) => {
@@ -85,9 +82,20 @@ const find = async (controller, query, source) => {
 };
 
 const reload = async controller => {
-  const values = await getBukkitsFromSources();
-  storage.save(controller, { id, values });
-  return `${values.length} bukkits loaded`;
+  return new Promise(async (resolve, reject) => {
+    try {
+      const bukkitSources =
+        (await storage.get(controller, "bukkitSources")) || [];
+      const values = await getBukkitsFromSources([
+        "https://bukk.it/",
+        ...bukkitSources
+      ]);
+      await storage.save(controller, { id, values });
+      resolve(`${values.length} bukkits loaded`);
+    } catch (err) {
+      reject(err);
+    }
+  });
 };
 
 module.exports = { find, reload };

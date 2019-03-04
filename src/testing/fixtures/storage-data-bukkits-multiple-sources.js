@@ -7,11 +7,6 @@ const data = {
       url: "https://bukk.it/one.gif"
     },
     {
-      source: "https://floops.io/",
-      fileName: "two.jpg",
-      url: "https://floops.io/two.jpg"
-    },
-    {
       source: "https://bukk.it/",
       fileName: "two.jpg",
       url: "https://bukk.it/two.jpg"
@@ -25,6 +20,11 @@ const data = {
       source: "https://floops.io/",
       fileName: "one.gif",
       url: "https://floops.io/one.gif"
+    },
+    {
+      source: "https://floops.io/",
+      fileName: "two.jpg",
+      url: "https://floops.io/two.jpg"
     }
   ]
 };
