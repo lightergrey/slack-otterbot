@@ -2,15 +2,17 @@ const bukkitService = require("../../services/bukkit");
 
 module.exports = controller => {
   controller.on("slash_command", async (bot, message) => {
-    try {
-      if (message.command === "/reload-bukkits") {
-        bot.replyPrivate(message, `reloading bukkits`);
+    if (message.command !== "/reload-bukkits") {
+      return;
+    }
 
-        const confirmationReply = await bukkitService.reload(controller);
-        bot.replyPrivateDelayed(message, confirmationReply);
-      }
+    bot.replyPrivate(message, `reloading bukkits`);
+
+    try {
+      const confirmationReply = await bukkitService.reload(controller);
+      bot.replyPrivateDelayed(message, confirmationReply);
     } catch (err) {
-      bot.replyPrivateDelayed(message, `Error in slash_command: ${err}`);
+      bot.replyPrivateDelayed(message, `'/reload-bukkits' error: ${err}`);
     }
   });
 };

@@ -1,22 +1,9 @@
 const slashCommand = require("./slash-command");
 
 const Botmock = require("botkit-mock");
-const nock = require("nock");
-const scrapedDataBukkit = require("../../testing/fixtures/scraped-data-bukkit");
-const storageDataSingleSource = require("../../testing/fixtures/storage-data-bukkits-single-source");
-
-const getMockUserInput = command => ({
-  type: "slash_command",
-  user: "someUserId",
-  channel: "someChannel",
-  messages: [
-    {
-      text: "",
-      command,
-      isAssertion: true
-    }
-  ]
-});
+global.console = { error: jest.fn() };
+jest.mock("../../services/bukkit");
+const bukkitService = require("../../services/bukkit");
 
 beforeEach(() => {
   this.controller = Botmock({
@@ -30,32 +17,53 @@ beforeEach(() => {
 
 test("does not respond to other", () => {
   const input = getMockUserInput("/other");
+
   return this.bot.usersInput([input]).then(message => {
     return expect(message).toMatchObject({});
   });
 });
 
-test("responds to '/reload-bukkits'", () => {
-  nock("https://bukk.it", { encodedQueryParams: true })
-    .get("/")
-    .reply(200, scrapedDataBukkit);
-
+test("responds with text from bukkit service find resolve", () => {
   const input = getMockUserInput("/reload-bukkits", "");
 
-  expect.assertions(5);
+  bukkitService.reload.mockResolvedValueOnce("reload resolve text");
 
-  return this.bot.usersInput([input]).then(() => {
-    const initialReply = this.bot.api.logByKey["replyPrivate"][0].json;
-    const confirmationReply = this.bot.api.logByKey["replyPrivate"][1].json;
-
-    expect(initialReply.text).toEqual("reloading bukkits");
-    expect(initialReply.response_type).toEqual("ephemeral");
-
-    expect(confirmationReply.text).toEqual("3 bukkits loaded");
-    expect(confirmationReply.response_type).toEqual("ephemeral");
-
-    this.controller.storage.teams.get("bukkits", (err, data) => {
-      return expect(data).toEqual(storageDataSingleSource);
-    });
+  expect.assertions(2);
+  return this.bot.usersInput([input]).then(message => {
+    expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
+      "reloading bukkits"
+    );
+    expect(this.bot.api.logByKey["replyPrivate"][1].json.text).toEqual(
+      "reload resolve text"
+    );
   });
+});
+
+test("responds with text from bukkit service find reject", () => {
+  const input = getMockUserInput("/reload-bukkits", "");
+
+  bukkitService.reload.mockRejectedValueOnce("reload reject text");
+
+  expect.assertions(2);
+  return this.bot.usersInput([input]).then(message => {
+    expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
+      "reloading bukkits"
+    );
+    expect(this.bot.api.logByKey["replyPrivate"][1].json.text).toEqual(
+      "'/reload-bukkits' error: reload reject text"
+    );
+  });
+});
+
+const getMockUserInput = command => ({
+  type: "slash_command",
+  user: "someUserId",
+  channel: "someChannel",
+  messages: [
+    {
+      text: "",
+      command,
+      isAssertion: true
+    }
+  ]
 });
