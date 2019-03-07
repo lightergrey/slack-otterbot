@@ -9,27 +9,26 @@ const getRandomItem = items => {
 };
 
 const makeBukkitsFromSourceAndFileNames = (source, fileNames) => {
-  return fileNames
-    .filter(fileName => /\.(gif|jpg|jpeg|png)$/i.test(fileName))
-    .map(fileName => {
-      const url = `${source}${fileName}`;
+  const bukkits = fileNames
+    .filter(name => /\.(gif|jpg|jpeg|png)$/i.test(name))
+    .map(name => {
+      const url = `${source}${name}`;
       return {
-        source,
-        fileName,
-        url
+        [name]: {
+          source,
+          name,
+          url
+        }
       };
     });
+
+  return { [source]: Object.assign({}, ...bukkits) };
 };
 
-const findRandomMatchForQuery = (bukkits, query, source) => {
-  const matches = fuzzy
-    .filter(source, bukkits, {
-      extract: el => el.source
-    })
-    .map(el => (el.original ? el.original : el))
-    .filter(item =>
-      query ? new RegExp(query, "i").test(item.fileName) : true
-    );
+const findRandomMatchForQuery = (bukkits, query) => {
+  const matches = bukkits.filter(item =>
+    query ? new RegExp(query, "i").test(item.name) : true
+  );
   return getRandomItem(matches);
 };
 
@@ -53,8 +52,33 @@ const getBukkitsFromSources = async sources => {
   });
 
   return Promise.all(requests).then(responses => {
-    return [].concat(...responses);
+    return { sources: Object.assign({}, ...responses) };
   });
+};
+
+const getBukkitCount = bukkits => {
+  const sourceBukkits = Object.values(bukkits.sources).map(source =>
+    Object.values(source)
+  );
+  return [].concat(...sourceBukkits).length;
+};
+
+const missingBukkits = bukkits => {
+  return (
+    !bukkits ||
+    !bukkits.sources ||
+    Object.values(bukkits.sources).length === 0 ||
+    getBukkitCount(bukkits) === 0
+  );
+};
+
+const getSourceBukkits = (bukkits, source) => {
+  const sourceBukkits = fuzzy
+    .filter(source, Object.keys(bukkits.sources))
+    .map(el => (el.original ? el.original : el))
+    .map(source => Object.values(bukkits.sources[source]));
+
+  return [].concat(...sourceBukkits);
 };
 
 const find = async (controller, query, source) => {
@@ -62,13 +86,15 @@ const find = async (controller, query, source) => {
     try {
       const bukkits = await storage.get(controller, id);
 
-      if (!bukkits || bukkits.length === 0) {
+      if (missingBukkits(bukkits)) {
         reject("No bukkits. Try `/reload-bukkits`");
       }
 
+      const sourceBukkits = getSourceBukkits(bukkits, source);
+
       const match = query
-        ? findRandomMatchForQuery(bukkits, query, source)
-        : getRandomItem(bukkits);
+        ? findRandomMatchForQuery(sourceBukkits, query)
+        : getRandomItem(sourceBukkits);
 
       if (!match) {
         resolve("Couldn’t find a match.");
@@ -91,7 +117,8 @@ const reload = async controller => {
         ...bukkitSources
       ]);
       await storage.save(controller, { id, values });
-      resolve(`${values.length} bukkits loaded`);
+
+      resolve(`${getBukkitCount(values)} bukkits loaded`);
     } catch (err) {
       reject(err);
     }
