@@ -199,15 +199,6 @@ const search = async (controller, query) => {
         return;
       }
 
-      const response = matches.map(match => match.url).join(", ");
-      console.log(
-        JSON.stringify(
-          formatBukkitSearchResultsAsBlocks(matches, query),
-          null,
-          2
-        )
-      );
-
       resolve(formatBukkitSearchResultsAsBlocks(matches, query));
     } catch (err) {
       reject(err);
