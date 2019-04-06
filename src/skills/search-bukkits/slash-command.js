@@ -6,19 +6,19 @@ module.exports = controller => {
       return;
     }
 
+    bot.replyAcknowledge();
+
     const [, query] = message.text.match(/^([\w-]+)?$/);
 
     if (!query) {
       bot.replyPrivate(message, `query required`);
     }
 
-    bot.replyPrivate(message, `searching bukkits`);
-
     try {
       const confirmationReply = await bukkitService.search(controller, query);
-      bot.replyPrivateDelayed(message, confirmationReply);
+      bot.replyPrivate(message, confirmationReply);
     } catch (err) {
-      bot.replyPrivateDelayed(message, `'/search-bukkits' error: ${err}`);
+      bot.replyPrivate(message, `'/search-bukkits' error: ${err}`);
     }
   });
 };

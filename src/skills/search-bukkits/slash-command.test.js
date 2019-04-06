@@ -40,13 +40,9 @@ test("responds with text from bukkit service search resolve", () => {
 
   bukkitService.search.mockResolvedValueOnce("search resolve text");
 
-  expect.assertions(2);
+  expect.assertions(1);
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
-      "searching bukkits"
-    );
-
-    expect(this.bot.api.logByKey["replyPrivate"][1].json.text).toEqual(
       "search resolve text"
     );
   });
@@ -57,13 +53,9 @@ test("responds with text from bukkit service search reject", () => {
 
   bukkitService.search.mockRejectedValueOnce("search reject text");
 
-  expect.assertions(2);
+  expect.assertions(1);
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
-      "searching bukkits"
-    );
-
-    expect(this.bot.api.logByKey["replyPrivate"][1].json.text).toEqual(
       "'/search-bukkits' error: search reject text"
     );
   });
