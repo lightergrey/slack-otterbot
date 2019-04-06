@@ -120,3 +120,26 @@ test("find: returns an item that matches query and source", async () => {
     bukkitService.find(this.controller, "one", "floops")
   ).resolves.toBe("https://floops.io/one.gif");
 });
+
+test("search: prompts reload bukkits if no bukkits", async () => {
+  expect.assertions(1);
+  await expect(bukkitService.search(this.controller, "foo")).rejects.toBe(
+    "No bukkits. Try `/reload-bukkits`"
+  );
+});
+
+test("search: returns a message if no match", async () => {
+  expect.assertions(1);
+  this.controller.storage.teams.save(storageDataMultiple, () => {});
+  await expect(bukkitService.search(this.controller, "foo")).resolves.toBe(
+    "Couldn’t find a match."
+  );
+});
+
+test("search: returns a message of all results", async () => {
+  expect.assertions(1);
+  this.controller.storage.teams.save(storageDataMultiple, () => {});
+  await expect(bukkitService.search(this.controller, "tw")).resolves.toBe(
+    "https://bukk.it/two.jpg, https://floops.io/two.jpg"
+  );
+});

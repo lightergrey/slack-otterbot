@@ -26,10 +26,14 @@ const makeBukkitsFromSourceAndFileNames = (source, fileNames) => {
 };
 
 const findRandomMatchForQuery = (bukkits, query) => {
-  const matches = bukkits.filter(item =>
+  const matches = getMatchesForQuery(bukkits, query);
+  return getRandomItem(matches);
+};
+
+const getMatchesForQuery = (bukkits, query) => {
+  return bukkits.filter(item =>
     query ? new RegExp(query, "i").test(item.name) : true
   );
-  return getRandomItem(matches);
 };
 
 const getBukkitsFromSources = async sources => {
@@ -125,4 +129,30 @@ const reload = async controller => {
   });
 };
 
-module.exports = { find, reload };
+const search = async (controller, query) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const bukkits = await storage.get(controller, id);
+
+      if (missingBukkits(bukkits)) {
+        reject("No bukkits. Try `/reload-bukkits`");
+      }
+
+      const sourceBukkits = getSourceBukkits(bukkits);
+
+      const matches = getMatchesForQuery(sourceBukkits, query);
+
+      if (matches.length === 0) {
+        resolve("Couldn’t find a match.");
+      }
+
+      const response = matches.map(match => match.url).join(", ");
+
+      resolve(response);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports = { find, reload, search };
