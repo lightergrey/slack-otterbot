@@ -7,6 +7,7 @@ const Botkit = require("botkit");
 const bukkitListener = require("./src/skills/bukkit/listener");
 const bukkitSlashCommand = require("./src/skills/bukkit/slash-command");
 const reloadBukkitsSlashCommand = require("./src/skills/reload-bukkits/slash-command");
+const searchBukkitsSlashCommand = require("./src/skills/search-bukkits/slash-command");
 
 let bot_options = {
   clientId: process.env.clientId,
@@ -56,3 +57,4 @@ require(__dirname + "/components/onboarding.js")(controller);
 bukkitListener(controller);
 bukkitSlashCommand(controller);
 reloadBukkitsSlashCommand(controller);
+searchBukkitsSlashCommand(controller);
