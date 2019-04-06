@@ -131,7 +131,7 @@ test("search: prompts reload bukkits if no bukkits", async () => {
 test("search: returns a message if no match", async () => {
   expect.assertions(1);
   this.controller.storage.teams.save(storageDataMultiple, () => {});
-  await expect(bukkitService.search(this.controller, "foo")).resolves.toBe(
+  await expect(bukkitService.search(this.controller, "foo")).rejects.toBe(
     "Couldn’t find a match."
   );
 });
@@ -139,7 +139,41 @@ test("search: returns a message if no match", async () => {
 test("search: returns a message of all results", async () => {
   expect.assertions(1);
   this.controller.storage.teams.save(storageDataMultiple, () => {});
-  await expect(bukkitService.search(this.controller, "tw")).resolves.toBe(
-    "https://bukk.it/two.jpg, https://floops.io/two.jpg"
-  );
+  await expect(bukkitService.search(this.controller, "tw")).resolves.toEqual([
+    {
+      text: { text: 'Found *2 bukkits* matching "tw"', type: "mrkdwn" },
+      type: "section"
+    },
+    { type: "divider" },
+    {
+      accessory: { image_url: "https://bukk.it/two.jpg", type: "image" },
+      text: { text: "*two.jpg*", type: "mrkdwn" },
+      type: "section"
+    },
+    {
+      accessory: {
+        text: { emoji: true, text: "Choose", type: "plain_text" },
+        type: "button",
+        value: "https://bukk.it/two.jpg"
+      },
+      text: { text: "https://bukk.it/two.jpg", type: "plain_text" },
+      type: "section"
+    },
+    { type: "divider" },
+    {
+      accessory: { image_url: "https://floops.io/two.jpg", type: "image" },
+      text: { text: "*two.jpg*", type: "mrkdwn" },
+      type: "section"
+    },
+    {
+      accessory: {
+        text: { emoji: true, text: "Choose", type: "plain_text" },
+        type: "button",
+        value: "https://floops.io/two.jpg"
+      },
+      text: { text: "https://floops.io/two.jpg", type: "plain_text" },
+      type: "section"
+    },
+    { type: "divider" }
+  ]);
 });

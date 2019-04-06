@@ -35,16 +35,16 @@ test("requires query text", () => {
   });
 });
 
-test("responds with text from bukkit service search resolve", () => {
+test("responds with blocks from bukkit service search resolve", () => {
   const input = getMockUserInput("/search-bukkits", "foo");
 
-  bukkitService.search.mockResolvedValueOnce("search resolve text");
+  bukkitService.search.mockResolvedValueOnce({ text: "search resolve text" });
 
   expect.assertions(1);
   return this.bot.usersInput([input]).then(message => {
-    expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
-      "search resolve text"
-    );
+    expect(this.bot.api.logByKey["replyPrivate"][0].json.blocks).toEqual({
+      text: "search resolve text"
+    });
   });
 });
 

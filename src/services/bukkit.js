@@ -85,6 +85,58 @@ const getSourceBukkits = (bukkits, source) => {
   return [].concat(...sourceBukkits);
 };
 
+const formatBukkitSearchResultsAsBlocks = (bukkits, query) => {
+  const blocks = [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `Found *${bukkits.length} bukkits* matching "${query}"`
+      }
+    },
+    {
+      type: "divider"
+    }
+  ];
+
+  bukkits.forEach(bukkit => {
+    blocks.push(
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*${bukkit.name}*`
+        },
+        accessory: {
+          type: "image",
+          image_url: bukkit.url
+        }
+      },
+      {
+        type: "section",
+        text: {
+          type: "plain_text",
+          text: bukkit.url
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Choose",
+            emoji: true
+          },
+          value: bukkit.url
+        }
+      },
+      {
+        type: "divider"
+      }
+    );
+  });
+
+  return blocks;
+};
+
 const find = async (controller, query, source) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -143,12 +195,20 @@ const search = async (controller, query) => {
       const matches = getMatchesForQuery(sourceBukkits, query);
 
       if (matches.length === 0) {
-        resolve("Couldn’t find a match.");
+        reject("Couldn’t find a match.");
+        return;
       }
 
       const response = matches.map(match => match.url).join(", ");
+      console.log(
+        JSON.stringify(
+          formatBukkitSearchResultsAsBlocks(matches, query),
+          null,
+          2
+        )
+      );
 
-      resolve(response);
+      resolve(formatBukkitSearchResultsAsBlocks(matches, query));
     } catch (err) {
       reject(err);
     }
