@@ -16,7 +16,10 @@ module.exports = controller => {
 
     try {
       const blocks = await bukkitService.search(controller, query);
-      bot.replyPrivateDelayed(message, JSON.stringify(blocks, null, 2));
+      bot.replyPrivateDelayed(
+        message,
+        "```\n" + JSON.stringify(blocks, null, 2) + "\n```"
+      );
     } catch (err) {
       bot.replyPrivate(message, `'/search-bukkits' error: ${err}`);
     }
