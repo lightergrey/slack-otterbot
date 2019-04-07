@@ -109,7 +109,8 @@ const formatBukkitSearchResultsAsBlocks = (bukkits, query) => {
         },
         accessory: {
           type: "image",
-          image_url: bukkit.url
+          image_url: bukkit.url,
+          alt_text: " "
         }
       },
       {
