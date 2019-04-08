@@ -21,4 +21,10 @@ module.exports = controller => {
       bot.replyPrivate(message, `'/search-bukkits' error: ${err}`);
     }
   });
+
+  controller.on("interactive_message_callback", function(bot, message) {
+    // check message.actions and message.callback_id to see what action to take...
+
+    bot.replyPrivateDelayed(message, JSON.stringify(message, null, 2));
+  });
 };

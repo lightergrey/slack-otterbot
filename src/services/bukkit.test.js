@@ -146,7 +146,11 @@ test("search: returns a message of all results", async () => {
     },
     { type: "divider" },
     {
-      accessory: { image_url: "https://bukk.it/two.jpg", type: "image" },
+      accessory: {
+        image_url: "https://bukk.it/two.jpg",
+        type: "image",
+        alt_text: " "
+      },
       text: { text: "*two.jpg*", type: "mrkdwn" },
       type: "section"
     },
@@ -161,7 +165,11 @@ test("search: returns a message of all results", async () => {
     },
     { type: "divider" },
     {
-      accessory: { image_url: "https://floops.io/two.jpg", type: "image" },
+      accessory: {
+        image_url: "https://floops.io/two.jpg",
+        type: "image",
+        alt_text: " "
+      },
       text: { text: "*two.jpg*", type: "mrkdwn" },
       type: "section"
     },
