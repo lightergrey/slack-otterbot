@@ -23,6 +23,7 @@ module.exports = controller => {
   });
 
   controller.on("block_actions", (bot, message) => {
+    bot.replyInteractive(message, "done");
     bot.reply(message, message.text);
   });
 };
