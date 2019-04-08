@@ -16,7 +16,7 @@ module.exports = controller => {
 
     try {
       const blocks = await bukkitService.search(controller, query);
-      bot.replyInteractive(message, { blocks });
+      bot.replyPrivate(message, { blocks });
     } catch (err) {
       bot.replyPrivate(message, `'/search-bukkits' error: ${err}`);
     }
@@ -35,6 +35,7 @@ module.exports = controller => {
   });
 
   controller.middleware.receive.use(function(bot, message, next) {
+    console.log(JSON.stringify(message, null, 2));
     if (message.type == "interactive_message_callback") {
       bot.replyPrivate(message, JSON.stringify(message, null, 2));
 
