@@ -33,4 +33,10 @@ module.exports = controller => {
   controller.hears("interactive", "direct_message", (bot, message) => {
     bot.replyPrivate(message, JSON.stringify(message, null, 2));
   });
+
+  controller.middleware.receive.use(function(bot, message, next) {
+    bot.replyPrivate(message, JSON.stringify(message, null, 2));
+
+    next();
+  });
 };
