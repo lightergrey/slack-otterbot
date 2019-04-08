@@ -33,7 +33,7 @@ module.exports = controller => {
     console.log("========= BLOCK ACTIONS");
     console.log(JSON.stringify(message));
     console.log("///////// BLOCK ACTIONS");
-    bot.replyPrivate(message, "block_actions");
+    bot.replyInteractive(message, message.text);
   });
 
   controller.hears("interactive", "direct_message", (bot, message) => {
