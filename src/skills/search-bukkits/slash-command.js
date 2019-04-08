@@ -16,13 +16,13 @@ module.exports = controller => {
 
     try {
       const blocks = await bukkitService.search(controller, query);
-      bot.replyInteractive(message, { blocks });
+      bot.replyPrivateDelayed(message, { blocks });
     } catch (err) {
-      bot.replyInteractive(message, `'/search-bukkits' error: ${err}`);
+      bot.replyPrivateDelayed(message, `'/search-bukkits' error: ${err}`);
     }
   });
 
   controller.on("block_actions", (bot, message) => {
-    bot.replyInteractive(message, message.text);
+    bot.reply(message, message.text);
   });
 };
