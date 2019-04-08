@@ -22,11 +22,11 @@ module.exports = controller => {
     }
   });
 
-  controller.on("interactive_message_callback", function(bot, message) {
-    bot.replyPrivateDelayed(message, JSON.stringify(message, null, 2));
+  controller.on("interactive_message_callback", (bot, message) => {
+    bot.replyPrivate(message, JSON.stringify(message, null, 2));
   });
 
-  controller.on("block_actions", function(bot, message) {
-    bot.replyPrivateDelayed(message, JSON.stringify(message, null, 2));
+  controller.on("block_actions", (bot, message) => {
+    bot.replyPrivate(message, JSON.stringify(message, null, 2));
   });
 };
