@@ -29,4 +29,8 @@ module.exports = controller => {
   controller.on("block_actions", (bot, message) => {
     bot.replyPrivate(message, JSON.stringify(message, null, 2));
   });
+
+  controller.hears("interactive", "direct_message", (bot, message) => {
+    bot.replyPrivate(message, JSON.stringify(message, null, 2));
+  });
 };
