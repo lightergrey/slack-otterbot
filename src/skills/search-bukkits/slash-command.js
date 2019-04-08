@@ -23,14 +23,17 @@ module.exports = controller => {
   });
 
   controller.on("interactive_message_callback", (bot, message) => {
-    bot.replyPrivate(message, JSON.stringify(message, null, 2));
+    console.log(JSON.stringify(message, null, 2));
+    bot.replyPrivate(message, "interactive_message_callback");
   });
 
   controller.on("block_actions", (bot, message) => {
-    bot.replyPrivate(message, JSON.stringify(message, null, 2));
+    console.log(JSON.stringify(message, null, 2));
+    bot.replyPrivate(message, "block_actions");
   });
 
   controller.hears("interactive", "direct_message", (bot, message) => {
-    bot.replyPrivate(message, JSON.stringify(message, null, 2));
+    console.log(JSON.stringify(message, null, 2));
+    bot.replyPrivate(message, "interactive");
   });
 };
