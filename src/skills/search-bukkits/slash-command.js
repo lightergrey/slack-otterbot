@@ -22,24 +22,7 @@ module.exports = controller => {
     }
   });
 
-  controller.on("interactive_message_callback", (bot, message) => {
-    console.log("========= INTERACTIVE MESSAGE CALLBACK");
-    console.log(JSON.stringify(message));
-    console.log("///////// INTERACTIVE MESSAGE CALLBACK");
-    bot.replyPrivate(message, "interactive_message_callback");
-  });
-
   controller.on("block_actions", (bot, message) => {
-    console.log("========= BLOCK ACTIONS");
-    console.log(JSON.stringify(message));
-    console.log("///////// BLOCK ACTIONS");
     bot.replyInteractive(message, message.text);
-  });
-
-  controller.hears("interactive", "direct_message", (bot, message) => {
-    console.log("========= INTERACTIVE");
-    console.log(JSON.stringify(message));
-    console.log("///////// INTERACTIVE");
-    bot.replyPrivate(message, "interactive");
   });
 };
