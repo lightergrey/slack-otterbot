@@ -35,8 +35,10 @@ module.exports = controller => {
   });
 
   controller.middleware.receive.use(function(bot, message, next) {
-    bot.replyPrivate(message, JSON.stringify(message, null, 2));
+    if (message.type == "interactive_message_callback") {
+      bot.replyPrivate(message, JSON.stringify(message, null, 2));
 
-    next();
+      next();
+    }
   });
 };
