@@ -6,7 +6,7 @@ module.exports = controller => {
       return;
     }
 
-    bot.replyAcknowledge();
+    bot.replyPrivate(message, `searching bukkits`);
 
     const [, query] = message.text.match(/^([\w-]+)?$/);
 
@@ -16,7 +16,7 @@ module.exports = controller => {
 
     try {
       const blocks = await bukkitService.search(controller, query);
-      bot.replyPrivateDelayed(message, { blocks });
+      bot.replyInteractive(message, { blocks });
     } catch (err) {
       bot.replyPrivate(message, `'/search-bukkits' error: ${err}`);
     }
