@@ -23,8 +23,10 @@ module.exports = controller => {
   });
 
   controller.on("interactive_message_callback", function(bot, message) {
-    // check message.actions and message.callback_id to see what action to take...
+    bot.replyPrivateDelayed(message, JSON.stringify(message, null, 2));
+  });
 
+  controller.on("block_actions", function(bot, message) {
     bot.replyPrivateDelayed(message, JSON.stringify(message, null, 2));
   });
 };

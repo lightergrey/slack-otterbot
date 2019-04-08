@@ -105,7 +105,7 @@ const formatBukkitSearchResultsAsBlocks = (bukkits, query) => {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `*${bukkit.name}*`
+          text: `*<${bukkit.url}>*`
         },
         accessory: {
           type: "image",
@@ -114,20 +114,18 @@ const formatBukkitSearchResultsAsBlocks = (bukkits, query) => {
         }
       },
       {
-        type: "section",
-        text: {
-          type: "plain_text",
-          text: bukkit.url
-        },
-        accessory: {
-          type: "button",
-          text: {
-            type: "plain_text",
-            text: "Choose",
-            emoji: true
-          },
-          value: bukkit.url
-        }
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Choose",
+              emoji: true
+            },
+            value: bukkit.url
+          }
+        ]
       },
       {
         type: "divider"
