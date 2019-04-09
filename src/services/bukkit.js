@@ -26,10 +26,14 @@ const makeBukkitsFromSourceAndFileNames = (source, fileNames) => {
 };
 
 const findRandomMatchForQuery = (bukkits, query) => {
-  const matches = bukkits.filter(item =>
+  const matches = getMatchesForQuery(bukkits, query);
+  return getRandomItem(matches);
+};
+
+const getMatchesForQuery = (bukkits, query) => {
+  return bukkits.filter(item =>
     query ? new RegExp(query, "i").test(item.name) : true
   );
-  return getRandomItem(matches);
 };
 
 const getBukkitsFromSources = async sources => {
@@ -81,6 +85,57 @@ const getSourceBukkits = (bukkits, source) => {
   return [].concat(...sourceBukkits);
 };
 
+const formatBukkitSearchResultsAsBlocks = (bukkits, query) => {
+  const blocks = [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `Found *${bukkits.length} bukkits* matching "${query}"`
+      }
+    },
+    {
+      type: "divider"
+    }
+  ];
+
+  bukkits.forEach(bukkit => {
+    blocks.push(
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `*<${bukkit.url}>*`
+        },
+        accessory: {
+          type: "image",
+          image_url: bukkit.url,
+          alt_text: " "
+        }
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Choose",
+              emoji: true
+            },
+            value: bukkit.url
+          }
+        ]
+      },
+      {
+        type: "divider"
+      }
+    );
+  });
+
+  return blocks;
+};
+
 const find = async (controller, query, source) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -125,4 +180,29 @@ const reload = async controller => {
   });
 };
 
-module.exports = { find, reload };
+const search = async (controller, query) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const bukkits = await storage.get(controller, id);
+
+      if (missingBukkits(bukkits)) {
+        reject("No bukkits. Try `/reload-bukkits`");
+      }
+
+      const sourceBukkits = getSourceBukkits(bukkits);
+
+      const matches = getMatchesForQuery(sourceBukkits, query);
+
+      if (matches.length === 0) {
+        reject("Couldn’t find a match.");
+        return;
+      }
+
+      resolve(formatBukkitSearchResultsAsBlocks(matches, query));
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports = { find, reload, search };
