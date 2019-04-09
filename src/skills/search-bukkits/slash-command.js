@@ -51,6 +51,30 @@ const formatBukkitSearchResultsAsBlocks = (bukkits, query) => {
   return blocks;
 };
 
+const formatBlockActionMessageAsBlock = message => {
+  return [
+    {
+      type: "image",
+      title: {
+        type: "plain_text",
+        text: `${message.text}`,
+        emoji: true
+      },
+      image_url: `${message.text}`,
+      alt_text: " "
+    },
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: `From <@${message.user}>`
+        }
+      ]
+    }
+  ];
+};
+
 module.exports = controller => {
   controller.on("slash_command", async (bot, message) => {
     if (message.command !== "/search-bukkits") {
@@ -76,6 +100,7 @@ module.exports = controller => {
 
   controller.on("block_actions", (bot, message) => {
     bot.replyInteractive(message, "done");
-    bot.reply(message, message.text);
+    const blocks = formatBlockActionMessageAsBlock(message);
+    bot.reply(message, { blocks });
   });
 };
