@@ -85,57 +85,6 @@ const getSourceBukkits = (bukkits, source) => {
   return [].concat(...sourceBukkits);
 };
 
-const formatBukkitSearchResultsAsBlocks = (bukkits, query) => {
-  const blocks = [
-    {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `Found *${bukkits.length} bukkits* matching "${query}"`
-      }
-    },
-    {
-      type: "divider"
-    }
-  ];
-
-  bukkits.forEach(bukkit => {
-    blocks.push(
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `*<${bukkit.url}>*`
-        },
-        accessory: {
-          type: "image",
-          image_url: bukkit.url,
-          alt_text: " "
-        }
-      },
-      {
-        type: "actions",
-        elements: [
-          {
-            type: "button",
-            text: {
-              type: "plain_text",
-              text: "Choose",
-              emoji: true
-            },
-            value: bukkit.url
-          }
-        ]
-      },
-      {
-        type: "divider"
-      }
-    );
-  });
-
-  return blocks;
-};
-
 const find = async (controller, query, source) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -198,7 +147,7 @@ const search = async (controller, query) => {
         return;
       }
 
-      resolve(formatBukkitSearchResultsAsBlocks(matches, query));
+      resolve(matches);
     } catch (err) {
       reject(err);
     }

@@ -136,52 +136,19 @@ test("search: returns a message if no match", async () => {
   );
 });
 
-test("search: returns a message of all results", async () => {
+test("search: returns all results", async () => {
   expect.assertions(1);
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(bukkitService.search(this.controller, "tw")).resolves.toEqual([
     {
-      text: { text: 'Found *2 bukkits* matching "tw"', type: "mrkdwn" },
-      type: "section"
-    },
-    { type: "divider" },
-    {
-      accessory: {
-        image_url: "https://bukk.it/two.jpg",
-        type: "image",
-        alt_text: " "
-      },
-      text: { text: "*two.jpg*", type: "mrkdwn" },
-      type: "section"
+      url: "https://bukk.it/two.jpg",
+      source: "https://bukk.it/",
+      name: "two.jpg"
     },
     {
-      accessory: {
-        text: { emoji: true, text: "Choose", type: "plain_text" },
-        type: "button",
-        value: "https://bukk.it/two.jpg"
-      },
-      text: { text: "https://bukk.it/two.jpg", type: "plain_text" },
-      type: "section"
-    },
-    { type: "divider" },
-    {
-      accessory: {
-        image_url: "https://floops.io/two.jpg",
-        type: "image",
-        alt_text: " "
-      },
-      text: { text: "*two.jpg*", type: "mrkdwn" },
-      type: "section"
-    },
-    {
-      accessory: {
-        text: { emoji: true, text: "Choose", type: "plain_text" },
-        type: "button",
-        value: "https://floops.io/two.jpg"
-      },
-      text: { text: "https://floops.io/two.jpg", type: "plain_text" },
-      type: "section"
-    },
-    { type: "divider" }
+      url: "https://floops.io/two.jpg",
+      source: "https://floops.io/",
+      name: "two.jpg"
+    }
   ]);
 });

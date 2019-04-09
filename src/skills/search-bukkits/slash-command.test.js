@@ -36,15 +36,97 @@ test("requires query text", () => {
 });
 
 test("responds with blocks from bukkit service search resolve", () => {
-  const input = getMockUserInput("/search-bukkits", "foo");
+  const input = getMockUserInput("/search-bukkits", "tw");
 
-  bukkitService.search.mockResolvedValueOnce({ text: "search resolve text" });
+  bukkitService.search.mockResolvedValueOnce([
+    {
+      url: "https://bukk.it/two.jpg",
+      source: "https://bukk.it/",
+      name: "two.jpg"
+    },
+    {
+      url: "https://floops.io/two.jpg",
+      source: "https://floops.io/",
+      name: "two.jpg"
+    }
+  ]);
 
-  expect.assertions(1);
+  expect.assertions(2);
   return this.bot.usersInput([input]).then(message => {
-    expect(this.bot.api.logByKey["replyPrivate"][0].json.blocks).toEqual({
-      text: "search resolve text"
-    });
+    expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
+      "searching bukkits"
+    );
+
+    expect(this.bot.api.logByKey["replyInteractive"][0].json.blocks).toEqual([
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: 'Found *2 bukkits* matching "tw"'
+        }
+      },
+      {
+        type: "divider"
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "*<https://bukk.it/two.jpg>*"
+        },
+        accessory: {
+          type: "image",
+          image_url: "https://bukk.it/two.jpg",
+          alt_text: " "
+        }
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Choose",
+              emoji: true
+            },
+            value: "https://bukk.it/two.jpg"
+          }
+        ]
+      },
+      {
+        type: "divider"
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "*<https://floops.io/two.jpg>*"
+        },
+        accessory: {
+          type: "image",
+          image_url: "https://floops.io/two.jpg",
+          alt_text: " "
+        }
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "Choose",
+              emoji: true
+            },
+            value: "https://floops.io/two.jpg"
+          }
+        ]
+      },
+      {
+        type: "divider"
+      }
+    ]);
   });
 });
 
@@ -53,9 +135,13 @@ test("responds with text from bukkit service search reject", () => {
 
   bukkitService.search.mockRejectedValueOnce("search reject text");
 
-  expect.assertions(1);
+  expect.assertions(2);
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
+      "searching bukkits"
+    );
+
+    expect(this.bot.api.logByKey["replyPrivate"][1].json.text).toEqual(
       "'/search-bukkits' error: search reject text"
     );
   });
