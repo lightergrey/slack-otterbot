@@ -94,7 +94,7 @@ test("find: returns a message if no match", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, "foo", undefined)
-  ).resolves.toBe("Couldn’t find a match.");
+  ).rejects.toBe("Couldn’t find a match.");
 });
 
 test("find: returns a random item without query", async () => {

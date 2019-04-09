@@ -101,7 +101,7 @@ const find = async (controller, query, source) => {
         : getRandomItem(sourceBukkits);
 
       if (!match) {
-        resolve("Couldn’t find a match.");
+        reject("Couldn’t find a match.");
       }
 
       resolve(match);
