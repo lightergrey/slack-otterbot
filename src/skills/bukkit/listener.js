@@ -18,8 +18,8 @@ module.exports = controller => {
       const [, query, source] = message.match;
 
       try {
-        const reply = await bukkitService.find(controller, query, source);
-        bot.reply(message, reply);
+        const bukkit = await bukkitService.find(controller, query, source);
+        bot.reply(message, bukkit.url);
       } catch (err) {
         const errorResponse = `'bukkit' error: ${err}`;
         bot.reply(message, errorResponse);
