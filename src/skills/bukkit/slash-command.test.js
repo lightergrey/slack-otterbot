@@ -39,12 +39,36 @@ test("detects a query and source", () => {
 test("responds with text from bukkit service find resolve", () => {
   const input = getMockUserInput("/bukkit", "");
 
-  bukkitService.find.mockResolvedValueOnce("find response text");
+  bukkitService.find.mockResolvedValueOnce({
+    source: "http://bukk.it/",
+    name: "two.gif",
+    url: "http://bukk.it/two.gif"
+  });
 
   expect.assertions(2);
   return this.bot.usersInput([input]).then(message => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
-    expect(message.text).toEqual("find response text");
+    expect(message.blocks).toEqual([
+      {
+        alt_text: " ",
+        image_url: "http://bukk.it/two.gif",
+        title: {
+          emoji: true,
+          text: "http://bukk.it/two.gif",
+          type: "plain_text"
+        },
+        type: "image"
+      },
+      {
+        elements: [
+          {
+            text: "From <@someUserId>",
+            type: "mrkdwn"
+          }
+        ],
+        type: "context"
+      }
+    ]);
   });
 });
 

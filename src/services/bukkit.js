@@ -104,7 +104,7 @@ const find = async (controller, query, source) => {
         resolve("Couldn’t find a match.");
       }
 
-      resolve(match.url);
+      resolve(match);
     } catch (err) {
       reject(err);
     }

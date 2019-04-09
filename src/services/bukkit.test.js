@@ -102,7 +102,11 @@ test("find: returns a random item without query", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, undefined, undefined)
-  ).resolves.toBe("https://floops.io/one.gif");
+  ).resolves.toEqual({
+    name: "one.gif",
+    source: "https://floops.io/",
+    url: "https://floops.io/one.gif"
+  });
 });
 
 test("find: returns an item that matches query", async () => {
@@ -110,7 +114,11 @@ test("find: returns an item that matches query", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, "two", undefined)
-  ).resolves.toBe("https://floops.io/two.jpg");
+  ).resolves.toEqual({
+    name: "two.jpg",
+    source: "https://floops.io/",
+    url: "https://floops.io/two.jpg"
+  });
 });
 
 test("find: returns an item that matches query and source", async () => {
@@ -118,7 +126,11 @@ test("find: returns an item that matches query and source", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, "one", "floops")
-  ).resolves.toBe("https://floops.io/one.gif");
+  ).resolves.toEqual({
+    name: "one.gif",
+    source: "https://floops.io/",
+    url: "https://floops.io/one.gif"
+  });
 });
 
 test("search: prompts reload bukkits if no bukkits", async () => {
