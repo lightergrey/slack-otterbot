@@ -94,7 +94,7 @@ test("find: returns a message if no match", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, "foo", undefined)
-  ).resolves.toBe("Couldn’t find a match.");
+  ).rejects.toBe("Couldn’t find a match.");
 });
 
 test("find: returns a random item without query", async () => {
@@ -102,7 +102,11 @@ test("find: returns a random item without query", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, undefined, undefined)
-  ).resolves.toBe("https://floops.io/one.gif");
+  ).resolves.toEqual({
+    name: "one.gif",
+    source: "https://floops.io/",
+    url: "https://floops.io/one.gif"
+  });
 });
 
 test("find: returns an item that matches query", async () => {
@@ -110,7 +114,11 @@ test("find: returns an item that matches query", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, "two", undefined)
-  ).resolves.toBe("https://floops.io/two.jpg");
+  ).resolves.toEqual({
+    name: "two.jpg",
+    source: "https://floops.io/",
+    url: "https://floops.io/two.jpg"
+  });
 });
 
 test("find: returns an item that matches query and source", async () => {
@@ -118,7 +126,11 @@ test("find: returns an item that matches query and source", async () => {
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(
     bukkitService.find(this.controller, "one", "floops")
-  ).resolves.toBe("https://floops.io/one.gif");
+  ).resolves.toEqual({
+    name: "one.gif",
+    source: "https://floops.io/",
+    url: "https://floops.io/one.gif"
+  });
 });
 
 test("search: prompts reload bukkits if no bukkits", async () => {
@@ -136,52 +148,19 @@ test("search: returns a message if no match", async () => {
   );
 });
 
-test("search: returns a message of all results", async () => {
+test("search: returns all results", async () => {
   expect.assertions(1);
   this.controller.storage.teams.save(storageDataMultiple, () => {});
   await expect(bukkitService.search(this.controller, "tw")).resolves.toEqual([
     {
-      text: { text: 'Found *2 bukkits* matching "tw"', type: "mrkdwn" },
-      type: "section"
-    },
-    { type: "divider" },
-    {
-      accessory: {
-        image_url: "https://bukk.it/two.jpg",
-        type: "image",
-        alt_text: " "
-      },
-      text: { text: "*two.jpg*", type: "mrkdwn" },
-      type: "section"
+      url: "https://bukk.it/two.jpg",
+      source: "https://bukk.it/",
+      name: "two.jpg"
     },
     {
-      accessory: {
-        text: { emoji: true, text: "Choose", type: "plain_text" },
-        type: "button",
-        value: "https://bukk.it/two.jpg"
-      },
-      text: { text: "https://bukk.it/two.jpg", type: "plain_text" },
-      type: "section"
-    },
-    { type: "divider" },
-    {
-      accessory: {
-        image_url: "https://floops.io/two.jpg",
-        type: "image",
-        alt_text: " "
-      },
-      text: { text: "*two.jpg*", type: "mrkdwn" },
-      type: "section"
-    },
-    {
-      accessory: {
-        text: { emoji: true, text: "Choose", type: "plain_text" },
-        type: "button",
-        value: "https://floops.io/two.jpg"
-      },
-      text: { text: "https://floops.io/two.jpg", type: "plain_text" },
-      type: "section"
-    },
-    { type: "divider" }
+      url: "https://floops.io/two.jpg",
+      source: "https://floops.io/",
+      name: "two.jpg"
+    }
   ]);
 });
