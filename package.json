@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "botkit-mock": "^0.1.11",
+    "eslint": "^5.16.0",
     "jest": "^24.7.1",
     "nock": "^10.0.6",
     "prettier": "^1.16.4"
