@@ -29,7 +29,7 @@ test("detects a query and source", () => {
   const input = getMockUserInput("/bukkit", "foo from bar");
 
   expect.assertions(2);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     const [, query, source] = bukkitService.find.mock.calls[0];
     expect(query).toEqual("foo");
     expect(source).toEqual("bar");
@@ -79,7 +79,7 @@ test("responds with text from bukkit service find reject", () => {
   bukkitService.find.mockRejectedValueOnce("find rejected text");
 
   expect.assertions(3);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
     expect(console.error).toBeCalledWith(expectedErrorMessage);
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(

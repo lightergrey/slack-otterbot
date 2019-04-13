@@ -29,7 +29,7 @@ test("responds with text from bukkit service find resolve", () => {
   bukkitService.reload.mockResolvedValueOnce("reload resolve text");
 
   expect.assertions(2);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
       "reloading bukkits"
     );
@@ -45,7 +45,7 @@ test("responds with text from bukkit service find reject", () => {
   bukkitService.reload.mockRejectedValueOnce("reload reject text");
 
   expect.assertions(2);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
       "reloading bukkits"
     );

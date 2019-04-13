@@ -28,7 +28,7 @@ test("requires query text", () => {
   const input = getMockUserInput("/search-bukkits", "");
 
   expect.assertions(1);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
       "query required"
     );
@@ -52,7 +52,7 @@ test("responds with blocks from bukkit service search resolve", () => {
   ]);
 
   expect.assertions(2);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
       "searching bukkits"
     );
@@ -136,7 +136,7 @@ test("responds with text from bukkit service search reject", () => {
   bukkitService.search.mockRejectedValueOnce("search reject text");
 
   expect.assertions(2);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     expect(this.bot.api.logByKey["replyPrivate"][0].json.text).toEqual(
       "searching bukkits"
     );

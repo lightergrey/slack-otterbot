@@ -30,7 +30,7 @@ test("detects a query and source", () => {
   const input = getMockUserInput("bukkit foo from bar", "params");
 
   expect.assertions(2);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     const [, query, source] = bukkitService.find.mock.calls[0];
     expect(query).toEqual("foo");
     expect(source).toEqual("bar");
@@ -77,7 +77,7 @@ test("responds once to message with the same id", () => {
   });
 
   expect.assertions(3);
-  return this.bot.usersInput([input]).then(message => {
+  return this.bot.usersInput([input]).then(() => {
     return this.bot.usersInput([input]).then(message => {
       expect(this.bot.replyAcknowledge).toHaveBeenCalledTimes(1);
       expect(this.bot.detailed_answers["someChannel"]).toHaveLength(1);
