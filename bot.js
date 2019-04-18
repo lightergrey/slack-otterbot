@@ -8,6 +8,7 @@ const bukkitListener = require("./src/skills/bukkit/listener");
 const bukkitSlashCommand = require("./src/skills/bukkit/slash-command");
 const reloadBukkitsSlashCommand = require("./src/skills/reload-bukkits/slash-command");
 const searchBukkitsSlashCommand = require("./src/skills/search-bukkits/slash-command");
+const exportBukkitsDataListener = require("./src/skills/export-bukkits-data/listener");
 
 let bot_options = {
   clientId: process.env.clientId,
@@ -58,3 +59,4 @@ bukkitListener(controller);
 bukkitSlashCommand(controller);
 reloadBukkitsSlashCommand(controller);
 searchBukkitsSlashCommand(controller);
+exportBukkitsDataListener(controller);
