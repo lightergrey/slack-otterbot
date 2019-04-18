@@ -13,7 +13,8 @@ module.exports = controller => {
 
         const response = await fetch(url);
         bot.replyPublicDelayed(message, "GOT RESPONSE");
-        console.log(response);
+        const json = await response.json();
+        console.log(json);
 
         bot.replyPublicDelayed(message, `${response}`);
       } catch (err) {
