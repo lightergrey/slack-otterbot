@@ -9,13 +9,14 @@ module.exports = controller => {
     ) {
       try {
         const url = message.files[0].url_private;
-        bot.reply(message, `this is a valid data file: ${url}`);
+        bot.reply(message, `this is a valid data file: \`${url}\``);
 
         const response = await fetch(url);
         bot.replyPublicDelayed(message, "GOT RESPONSE");
         const json = await response.json();
-        console.log(json);
-
+        console.log("*********");
+        console.log(JSON.stringify(json));
+        console.log("*********");
         bot.replyPublicDelayed(message, `${response}`);
       } catch (err) {
         bot.replyPublicDelayed(message, `${err}`);
