@@ -88,11 +88,7 @@ const getSourceBukkits = (bukkits, source) => {
 const find = async (controller, query, source) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const bukkits = await storage.get(controller, id);
-
-      if (missingBukkits(bukkits)) {
-        reject("No bukkits. Try `/reload-bukkits`");
-      }
+      const bukkits = await getData(controller);
 
       const sourceBukkits = getSourceBukkits(bukkits, source);
 
@@ -132,11 +128,7 @@ const reload = async controller => {
 const search = async (controller, query) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const bukkits = await storage.get(controller, id);
-
-      if (missingBukkits(bukkits)) {
-        reject("No bukkits. Try `/reload-bukkits`");
-      }
+      const bukkits = await getData(controller);
 
       const sourceBukkits = getSourceBukkits(bukkits);
 
@@ -154,4 +146,20 @@ const search = async (controller, query) => {
   });
 };
 
-module.exports = { find, reload, search };
+const getData = controller => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const bukkits = await storage.get(controller, id);
+
+      if (missingBukkits(bukkits)) {
+        reject("No bukkits. Try `/reload-bukkits`");
+      }
+
+      resolve(bukkits);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports = { find, reload, search, getData };
