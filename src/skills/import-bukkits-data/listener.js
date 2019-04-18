@@ -1,6 +1,11 @@
 module.exports = controller => {
   controller.on("file_share", (bot, message) => {
-    console.log(JSON.stringify(message));
-    bot.reply(message, `\`\`\`\n${JSON.stringify(message, null, 2)}\n\`\`\``);
+    if (
+      message.files &&
+      message.files[0] &&
+      message.files[0].name === "bukkits-data.json"
+    ) {
+      bot.reply(message, "this is a valid data file");
+    }
   });
 };
