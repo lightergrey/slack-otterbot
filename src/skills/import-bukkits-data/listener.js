@@ -11,11 +11,15 @@ module.exports = controller => {
         const url = message.files[0].url_private;
         bot.reply(message, `this is a valid data file: \`${url}\``);
 
-        fetch(url).then(res => {
-          console.log("**************");
-          console.log(JSON.stringify(res));
-          console.log("**************");
+        const response = await fetch(url, {
+          headers: {
+            Authorization: "Bearer " + bot.config.bot.token // Authorization header with bot's access token
+          }
         });
+
+        console.log("**************");
+        console.log(JSON.stringify(response));
+        console.log("**************");
 
         // const response = await fetch(url);
         // bot.replyPublicDelayed(message, "GOT RESPONSE");
