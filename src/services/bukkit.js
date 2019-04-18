@@ -25,11 +25,6 @@ const makeBukkitsFromSourceAndFileNames = (source, fileNames) => {
   return { [source]: Object.assign({}, ...bukkits) };
 };
 
-const findRandomMatchForQuery = (bukkits, query) => {
-  const matches = getMatchesForQuery(bukkits, query);
-  return getRandomItem(matches);
-};
-
 const getMatchesForQuery = (bukkits, query) => {
   return bukkits.filter(item =>
     query ? new RegExp(query, "i").test(item.name) : true
@@ -85,20 +80,35 @@ const getSourceBukkits = (bukkits, source) => {
   return [].concat(...sourceBukkits);
 };
 
-const find = async (controller, query, source) => {
+const getMatchesForSourceAndQuery = async (controller, query, source) => {
   return new Promise(async (resolve, reject) => {
     try {
       const bukkits = await getData(controller);
-
       const sourceBukkits = getSourceBukkits(bukkits, source);
+      const matches = getMatchesForQuery(sourceBukkits, query);
 
-      const match = query
-        ? findRandomMatchForQuery(sourceBukkits, query)
-        : getRandomItem(sourceBukkits);
-
-      if (!match) {
+      if (matches.length === 0) {
         reject("Couldn’t find a match.");
+        return;
       }
+
+      resolve(matches);
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+const find = async (controller, query, source) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const matches = await getMatchesForSourceAndQuery(
+        controller,
+        query,
+        source
+      );
+
+      const match = getRandomItem(matches);
 
       resolve(match);
     } catch (err) {
@@ -128,16 +138,7 @@ const reload = async controller => {
 const search = async (controller, query) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const bukkits = await getData(controller);
-
-      const sourceBukkits = getSourceBukkits(bukkits);
-
-      const matches = getMatchesForQuery(sourceBukkits, query);
-
-      if (matches.length === 0) {
-        reject("Couldn’t find a match.");
-        return;
-      }
+      const matches = await getMatchesForSourceAndQuery(controller, query);
 
       resolve(matches);
     } catch (err) {
@@ -146,7 +147,7 @@ const search = async (controller, query) => {
   });
 };
 
-const getData = controller => {
+const getData = async controller => {
   return new Promise(async (resolve, reject) => {
     try {
       const bukkits = await storage.get(controller, id);
