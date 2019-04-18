@@ -9,7 +9,6 @@ module.exports = controller => {
     ) {
       try {
         const url = message.files[0].url_private;
-        bot.reply(message, `this is a valid data file: \`${url}\``);
 
         const response = await fetch(url, {
           headers: {
@@ -19,6 +18,11 @@ module.exports = controller => {
 
         console.log("**************");
         console.log(JSON.stringify(response));
+        console.log("**************");
+
+        const json = await response.json();
+        console.log("**************");
+        console.log(JSON.stringify(json));
         console.log("**************");
 
         // const response = await fetch(url);
