@@ -1,4 +1,5 @@
-var request = require("request");
+const request = require("request");
+const bukkitService = require("../../services/bukkit");
 
 module.exports = controller => {
   controller.on("file_share", (bot, message) => {
@@ -7,6 +8,8 @@ module.exports = controller => {
       message.files[0] &&
       message.files[0].name === "bukkits-data.json"
     ) {
+      bot.replyAcknowledge();
+
       const url = message.files[0].url_private;
 
       const opts = {
@@ -17,17 +20,20 @@ module.exports = controller => {
         }
       };
 
-      request(opts, function(err, res, body) {
-        if (typeof body === "string" || body instanceof String) {
-          console.log("+++++++++");
-          console.log("body is a string");
-          console.log("+++++++++");
+      request(opts, async (err, res, body) => {
+        if (res.statusCode !== 200) {
+          console.error(`error: ${res.statusCode}`);
+          console.error(`error: ${err}`);
         }
-        const data = JSON.parse(body);
-        bot.reply(message, `FILE RETRIEVE STATUS: ${res.statusCode}`);
-        console.log("**************");
-        console.log(data);
-        console.log("**************");
+        try {
+          const data = JSON.parse(body);
+          await bukkitService.saveData(controller, data);
+          bot.replyPublicDelayed(message, "bukkit data imported");
+        } catch (err) {
+          const errorResponse = `'import bukkits data' error: ${err}`;
+          bot.replyPublicDelayed(message, errorResponse);
+          console.error(errorResponse);
+        }
       });
     }
   });

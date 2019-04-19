@@ -126,7 +126,7 @@ const reload = async controller => {
         "https://bukk.it/",
         ...bukkitSources
       ]);
-      await storage.save(controller, { id, values });
+      await saveData(controller, values);
 
       resolve(`${getBukkitCount(values)} bukkits loaded`);
     } catch (err) {
@@ -163,4 +163,8 @@ const getData = async controller => {
   });
 };
 
-module.exports = { find, reload, search, getData };
+const saveData = async (controller, values) => {
+  return storage.save(controller, { id, values });
+};
+
+module.exports = { find, reload, search, getData, saveData };
