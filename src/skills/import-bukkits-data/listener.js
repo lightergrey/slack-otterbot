@@ -18,6 +18,11 @@ module.exports = controller => {
       };
 
       request(opts, function(err, res, body) {
+        if (typeof body === "string" || body instanceof String) {
+          console.log("+++++++++");
+          console.log("body is a string");
+          console.log("+++++++++");
+        }
         const data = JSON.parse(body);
         bot.reply(message, `FILE RETRIEVE STATUS: ${res.statusCode}`);
         console.log("**************");
