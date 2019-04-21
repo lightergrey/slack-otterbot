@@ -19,7 +19,9 @@ module.exports = controller => {
           },
           err => {
             if (err) {
-              bot.reply(message, `'export bukkits data' error: ${err}`);
+              const errorResponse = `'export bukkits data' error: ${err}`;
+              bot.reply(message, errorResponse);
+              console.error(errorResponse);
             }
           }
         );
